@@ -25,14 +25,16 @@ jobs:
       run: |
         pip install feedparser gitpython
 
+    - name: Configure Git
+      run: |
+        git config --global user.name 'sso'  # 원하는 사용자 이름으로 변경
+        git config --global user.email 'soyeon3589@naver.com'  # 원하는 이메일로 변경
+
     - name: Run script
       run: python scripts/update_blog.py
 
     - name: Commit and push changes
       run: |
-        git config --global user.name 'sso'
-        git config --global user.email 'soyeon3589@naver.com'
         git add .
         git commit -m "Update blog posts"
         git push
-
