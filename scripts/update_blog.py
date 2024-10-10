@@ -21,8 +21,11 @@ repo = git.Repo(repo_path)
 # RSS 피드 파싱
 feed = feedparser.parse(rss_url)
 
-# 각 글을 파일로 저장하고 커밋
+# 피드 항목 개수 출력
+print(f"Number of entries in feed: {len(feed.entries)}")
 for entry in feed.entries:
+    print(f"Entry title: {entry.title}")
+
     # 파일 이름에서 유효하지 않은 문자 제거 또는 대체
     file_name = entry.title.replace('/', '-').replace('\\', '-') + '.md'
     file_path = os.path.join(posts_dir, file_name)
@@ -35,14 +38,13 @@ for entry in feed.entries:
 
         # 깃허브에 파일 추가
         repo.git.add(file_path)
+        print("After adding file, Git status:")
+        print(repo.git.status())
 
-# Git 상태 확인
-print("Git status before commit:")
-print(repo.git.status())
-
-# 커밋할 변경 사항이 있는 경우에만 커밋
+# Git 상태 확인 및 커밋
 if repo.index.diff("HEAD"):
     repo.git.commit('-m', f'Add post: {entry.title}')
+    print(f"Committed: {entry.title}")
 else:
     print('No changes to commit.')
 
