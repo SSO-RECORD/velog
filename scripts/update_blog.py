@@ -25,9 +25,13 @@ feed = feedparser.parse(rss_url)
 print(f"Number of entries in feed: {len(feed.entries)}")
 for entry in feed.entries:
     print(f"Entry title: {entry.title}")
-
+    
     # 파일 이름에서 유효하지 않은 문자 제거 또는 대체
-    file_name = entry.title.replace('/', '-').replace('\\', '-') + '.md'
+    file_name = entry.title
+    file_name = file_name.replace('/', '-') #슬래시를 대시로 대체
+    file_name = file_name.replace('\\', '-') #백슬래시를 대시로 대체
+    #필요에 따라 추가 문자 대체
+    file_name += '.md'
     file_path = os.path.join(posts_dir, file_name)
 
     # 파일이 이미 존재하지 않으면 생성
@@ -38,15 +42,9 @@ for entry in feed.entries:
 
         # 깃허브에 파일 추가
         repo.git.add(file_path)
+        repo.git.commit('-m', f'Add post: {entry.title}')
         print("After adding file, Git status:")
         print(repo.git.status())
-
-# Git 상태 확인 및 커밋
-if repo.index.diff("HEAD"):
-    repo.git.commit('-m', f'Add post: {entry.title}')
-    print(f"Committed: {entry.title}")
-else:
-    print('No changes to commit.')
 
 # 변경 사항을 깃허브에 푸시
 repo.git.push()
