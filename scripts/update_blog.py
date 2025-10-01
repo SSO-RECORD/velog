@@ -34,17 +34,25 @@ for entry in feed.entries:
     file_name += '.md'
     file_path = os.path.join(posts_dir, file_name)
 
+    # 새 글이거나, 기존 글과 내용이 달라진 경우 업데이트
+    needs_update = False
+    content = entry.description.strip()
+
     # 파일이 이미 존재하지 않으면 생성
     if not os.path.exists(file_path):
+        needs_update = True
+    else:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            old_content = file.read().strip()
+            if old_content != content:
+                needs_update = True
+                
+    if needs_update:
         with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(entry.description)  # 글 내용을 파일에 작성
-            print(f"Created file: {file_path}")  # 파일 생성 확인용 로그
-
+            file.write(content)  # 글 내용을 파일에 작성
         # 깃허브에 파일 추가
         repo.git.add(file_path)
-        repo.git.commit('-m', f'Add post: {entry.title}')
-        print("After adding file, Git status:")
-        print(repo.git.status())
-
-# 변경 사항을 깃허브에 푸시
-repo.git.push()
+        repo.git.commit('-m', f'Update post: {entry.title}')
+        print(f"Updated file: {file_path}")
+    else:
+        print(f"No changes for: {file_path}")
