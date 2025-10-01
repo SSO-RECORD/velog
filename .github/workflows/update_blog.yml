@@ -8,6 +8,9 @@ on:
     - cron: '0 0 * * *'  # 매일 자정 UTC (한국 시간 오전 9시)
     - cron: '0 15 * * *' # 한국 시간 자정 (UTC 15:00)
 
+permissions:
+  contents: write
+
 jobs:
   update_blog:
     runs-on: ubuntu-latest
