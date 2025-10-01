@@ -35,3 +35,7 @@ jobs:
 
     - name: Run script
       run: python scripts/update_blog.py
+
+    - name: Commit and push changes
+      run: |
+        git push
